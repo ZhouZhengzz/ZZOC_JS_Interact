@@ -93,7 +93,7 @@
 }
 
 
-//➡️第三种方案，在iOS 7之后，apple添加了一个新的库JavaScriptCore，用来做JS交互，因此JS与原生OC交互也变得简单了许多⬅️
+//➡️第三种方案，在iOS7之后，apple添加了一个新的库JavaScriptCore，用来做JS交互，因此JS与原生OC交互也变得简单了许多。做法是首先添加JavaScriptCore.framework，然后倒入头文件<JavaScriptCore/JavaScriptCore.h>⬅️
 #pragma mark - TSWebViewDelegate
 //如果JS调用OC方法的时机是在页面加载完成之后，比如点击web界面上的按钮或者由用户手动触发一个事件调用OC代码，这种情况一定是web页面加载完成之后才会发生的，这时我们在webViewDidFinishLoad注入了JS，一点问题都没有。但是，如果JS调用OC方法的时机刚好发生在页面加载过程中呢？比如web界面加载过程中自动执行一些操作需要调用OC代码，而此时webViewDidFinishLoad还没有回调，所以我们的JS代码并没有注入。因此找到UIWebView+TS_JavaScriptContext，这样就可以在js环境生成时调用。
 - (void)webView:(UIWebView *)webView didCreateJavaScriptContext:(JSContext *)ctx {
