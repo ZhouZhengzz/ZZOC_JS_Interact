@@ -29,21 +29,22 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     self.view.backgroundColor = [UIColor whiteColor];
+    self.title = @"UIWebView";
     
-    _label = [[UILabel alloc] initWithFrame:CGRectMake(30, 30, ScreenWidth-60, 40)];
+    _label = [[UILabel alloc] initWithFrame:CGRectMake(30, 80, ScreenWidth-60, 40)];
     _label.backgroundColor = [UIColor orangeColor];
     _label.textAlignment = NSTextAlignmentCenter;
-    _label.text = @"↓ 下面是一个webView ↓";
+    _label.text = @"↓ 下面是一个UIWebView ↓";
     [self.view addSubview:_label];
     
-    _webView = [[UIWebView alloc] initWithFrame:CGRectMake(10, 80, ScreenWidth-20, ScreenHeight-80-10-60)];
+    _webView = [[UIWebView alloc] initWithFrame:CGRectMake(10, 130, ScreenWidth-20, ScreenHeight-80-10-60-50)];
     _webView.backgroundColor = [UIColor lightGrayColor];
     _webView.scalesPageToFit = YES;
     _webView.opaque = NO;
     _webView.scrollView.bounces = NO;
     _webView.delegate = self;
     [self.view addSubview:_webView];
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"ddd.html" withExtension:nil];
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"UIWebView.html" withExtension:nil];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [_webView loadRequest:request];
     
@@ -58,15 +59,17 @@
 
 #pragma mark - *********** OC调用JS ***********
 - (void)onClick {
-    
-    //➡️第一种方案，注意：该方法会同步返回一个字符串，是一个同步方法，可能会阻塞UI⬅️
+    [self performSelectorOnMainThread:@selector(mainThread) withObject:nil waitUntilDone:NO];
+}
+- (void)mainThread {
+//    //➡️第一种方案，注意：该方法会同步返回一个字符串，是一个同步方法，可能会阻塞UI⬅️
 //    [_webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"showAlert('%@')",@"这里是JS中alert弹出的message"]];
-    
+
     //➡️第二种方案，使用JavaScriptCore库来做JS交互⬅️
     NSString *textJS = @"showAlert('这里是JS中alert弹出的message')";
     [_jsContext evaluateScript:textJS];
-    
 }
+
 
 #pragma mark - *********** JS调用OC ***********
 #pragma mark - webViewDelegate

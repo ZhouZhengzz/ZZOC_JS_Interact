@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <title>Mobile Cookbook</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .btn{display: inline-block; margin:5px;padding: 10px 6px; font-size: 20px;color: #000;background: #ccc;border-radius: 5%;}
+    </style>
+</head>
+<body>
+<button id="close" type="button" >close</button><br/><br/><br/>
+<!-- a标签，JS调用OC，直接拦截跳转链接 -->
+<a class="btn" href="http://baidu.com" >跳转</a><br/><br/><br/>
+<button id="share" type="button" >share</button><br/>
+</body>
+<script src="http://wap.ghs.net/wap_themes/default/images/jQuery-3.1.1.min.js"></script>
+<script>
+    
+    
+    //关闭按钮功能，JS调用OC拦截请求
+    var u = navigator.userAgent.toLowerCase();
+    var isApple = /(iphone|ipad|ipod|ios)/i.test(u);
+    var isAndroid = /android/i.test(u);
+    $("#close").on('click',function () {
+       var u = navigator.userAgent.toLowerCase();
+       if(isApple){
+           //apple终端
+           window.location = 'close://';
+       }else if(isAndroid){
+           //安卓终端
+           if(window.AndroidBridge){
+               window.AndroidBridge.close();
+           }
+       }
+    });
+    
+    //分享功能，JS调用OC通过注入js
+    $("#share").on('click',function () {
+        //添加动画效果
+        //调用app方法
+        if (isApple) {
+            window.webkit.messageHandlers.share.postMessage('qqq');
+        } else {
+            alert('没有注入');
+        }
+    });
+    
+    //OC调用JS，传参
+    function showText(message){
+        
+    }
+
+
+
+</script>
+</html>
