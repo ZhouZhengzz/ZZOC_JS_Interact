@@ -82,7 +82,7 @@
 
 #pragma mark - >>>>>>>>> OC调用JS <<<<<<<<<
 - (void)onClick {
-    NSString *textJS = @"showText('这里是JS中的message')";
+    NSString *textJS = @"showAlert('这里是JS中的message')";
     [_webView evaluateJavaScript:textJS completionHandler:^(id _Nullable result, NSError * _Nullable error) {
         NSLog(@"result:%@  error:%@",result, error);
     }];
@@ -146,6 +146,11 @@
     
 }
 
+//响应完成时
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationResponse:(nonnull WKNavigationResponse *)navigationResponse decisionHandler:(nonnull void (^)(WKNavigationResponsePolicy))decisionHandler {
+    decisionHandler(WKNavigationResponsePolicyAllow);
+}
+
 - (void)webView:(WKWebView *)webView didStartProvisionalNavigation:(WKNavigation *)navigation {
     NSLog(@"页面开始加载");
 }
@@ -157,6 +162,20 @@
 - (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
     NSLog(@"页面加载失败");
 }
+
+#pragma mark - >>>>>>>>> WKUIDelegate <<<<<<<<<
+//在JS端调用alert函数时，会调用此方法
+//JS端调用alert时所传的数据通过message拿到
+//在原生得到结果后，需要回调JS，通过completionHandler回调
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"alert" message:message preferredStyle:UIAlertControllerStyleAlert];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        completionHandler();
+    }]];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
 
 - (void)dealloc {
     [_config.userContentController removeScriptMessageHandlerForName:@"share"];
